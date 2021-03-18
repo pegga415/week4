@@ -1,50 +1,46 @@
-from flask import Flask, redirect, url_for, render_template, request, session
-app = Flask(__name__)
-app.secret_key = "#230dec61-fee8-4ef2-a791-36f9e680c9fc"
+from flask import Flask, render_template,redirect,request,session,url_for
 
-# 首頁
+app = Flask(__name__)
+app.secret_key = 'djdkillsdmck_kdkewdkwjs-dkskksaaxxls'
+
 @app.route('/')
 def index():
-    if "user" in session:
-        return redirect(url_for("member")) 
-    return render_template('index.html')
-
+    if 'user' in session:
+        return redirect('/member')
+    else:
+        return render_template('index.html')
 
 # 登入頁
-@app.route("/signin", methods=["POST","GET"])
+@app.route('/signin', methods=["POST","GET"])
 def signin():
-    if request.method == "POST":
-        user = request.form["userID"]
-        password = request.form["password"]
-        session["user"] = user
-        if user=='test' and password=='test':
-            return redirect(url_for("member"))
-        else:
-            return redirect(url_for("error"))
+    userId = request.form['userID']
+    password = request.form['password']
+    session['user'] = userId
+    if userId == 'test' and password == 'test':
+        return redirect('/member')
     else:
-        if "user" in session:
-            return redirect(url_for("member")) 
-    
-# 錯誤頁
-@app.route("/error")
-def error():
-    return render_template('error.html')
-    
+        session.pop("user",None)
+        return redirect('/error')
+
 # 會員頁
-@app.route("/member")
+@app.route('/member')
 def member():
-    if "user" in session:
-        user = session["user"]
-        return render_template("member.html")
+    if 'user' in session:
+        return render_template('member.html')
     else:
         return redirect('/')
 
+# 錯誤頁
+@app.route('/error')
+def error():
+    return render_template('error.html')
 
-# logout    
-@app.route("/signout")
-def logout():
-    session.pop("user", None)
+# 登出頁
+@app.route('/signout')
+def signout():
+    session.pop('user',None)
     return redirect('/')
 
-if __name__ =="__main__":
-    app.run(debug=True, port=3000)
+
+if __name__ == "__main__":
+    app.run(port=3000)
